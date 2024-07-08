@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 
 const Calculator = () => {
   const [display, setDisplay] = useState('0');
@@ -10,6 +10,21 @@ const Calculator = () => {
   const [tags, setTags] = useState(['未分類']);
   const [selectedTag, setSelectedTag] = useState('未分類');
   const [newTag, setNewTag] = useState('');
+
+  useEffect(() => {
+    const savedHistory = localStorage.getItem('calculatorHistory');
+    const savedTags = localStorage.getItem('calculatorTags');
+    if (savedHistory) setHistory(JSON.parse(savedHistory));
+    if (savedTags) setTags(JSON.parse(savedTags));
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('calculatorHistory', JSON.stringify(history));
+  }, [history]);
+
+  useEffect(() => {
+    localStorage.setItem('calculatorTags', JSON.stringify(tags));
+  }, [tags]);
 
   const formatNumber = (num) => {
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -69,6 +84,8 @@ const Calculator = () => {
     setHistory([]);
     setTags(['未分類']);
     setSelectedTag('未分類');
+    localStorage.removeItem('calculatorHistory');
+    localStorage.removeItem('calculatorTags');
   };
 
   const handleAddTag = () => {
@@ -168,35 +185,25 @@ const Calculator = () => {
         ))}
       </div>
       <div className="mb-4">
-        <div>
-          <button className="w-full justify-between bg-white p-2 rounded">
-            {currentTag || "タグを選択"}
-            <span className="ml-2">▼</span>
+        <select 
+          value={currentTag} 
+          onChange={(e) => handleTagChange(e.target.value)}
+          className="w-full p-2 mb-2 border rounded"
+        >
+          {tags.map((tag) => (
+            <option key={tag} value={tag}>{tag}</option>
+          ))}
+        </select>
+        <div className="flex">
+          <input
+            placeholder="新しいタグ"
+            value={newTag}
+            onChange={(e) => setNewTag(e.target.value)}
+            className="flex-grow p-2 border rounded-l"
+          />
+          <button onClick={handleAddTag} className="bg-blue-500 text-white p-2 rounded-r">
+            追加
           </button>
-        </div>
-        <div className="w-full p-0">
-          <div className="h-[200px] overflow-y-auto">
-            {tags.map((tag) => (
-              <button
-                key={tag}
-                className="w-full justify-start p-2 hover:bg-gray-100"
-                onClick={() => handleTagChange(tag)}
-              >
-                {tag}
-              </button>
-            ))}
-          </div>
-          <div className="flex p-2">
-            <input
-              placeholder="新しいタグ"
-              value={newTag}
-              onChange={(e) => setNewTag(e.target.value)}
-              className="flex-grow p-2 border rounded"
-            />
-            <button onClick={handleAddTag} className="ml-2 bg-blue-500 text-white p-2 rounded">
-              追加
-            </button>
-          </div>
         </div>
       </div>
       <div className="bg-white p-2 rounded mb-4">
