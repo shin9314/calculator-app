@@ -1,11 +1,4 @@
 import React, { useState, useMemo } from 'react';
-import { Button } from '@/components/ui/button';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Input } from '@/components/ui/input';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 
 const Calculator = () => {
   const [display, setDisplay] = useState('0');
@@ -156,7 +149,7 @@ const Calculator = () => {
       </div>
       <div className="grid grid-cols-4 gap-2 mb-4">
         {[7, 8, 9, '+', 4, 5, 6, '-', 1, 2, 3, '*', 0, '00', '.', '/', 'C', '='].map((item, index) => (
-          <Button
+          <button
             key={index}
             onClick={() => {
               if (typeof item === 'number' || item === '00' || item === '.') handleNumberClick(item.toString());
@@ -171,53 +164,50 @@ const Calculator = () => {
             }`}
           >
             {item}
-          </Button>
+          </button>
         ))}
       </div>
       <div className="mb-4">
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button className="w-full justify-between">
-              {currentTag || "タグを選択"}
-              <span className="ml-2">▼</span>
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-full p-0">
-            <ScrollArea className="h-[200px]">
-              {tags.map((tag) => (
-                <Button
-                  key={tag}
-                  className="w-full justify-start"
-                  variant="ghost"
-                  onClick={() => handleTagChange(tag)}
-                >
-                  {tag}
-                </Button>
-              ))}
-            </ScrollArea>
-            <div className="flex p-2">
-              <Input
-                placeholder="新しいタグ"
-                value={newTag}
-                onChange={(e) => setNewTag(e.target.value)}
-                className="flex-grow"
-              />
-              <Button onClick={handleAddTag} className="ml-2">
-                追加
-              </Button>
-            </div>
-          </PopoverContent>
-        </Popover>
+        <div>
+          <button className="w-full justify-between bg-white p-2 rounded">
+            {currentTag || "タグを選択"}
+            <span className="ml-2">▼</span>
+          </button>
+        </div>
+        <div className="w-full p-0">
+          <div className="h-[200px] overflow-y-auto">
+            {tags.map((tag) => (
+              <button
+                key={tag}
+                className="w-full justify-start p-2 hover:bg-gray-100"
+                onClick={() => handleTagChange(tag)}
+              >
+                {tag}
+              </button>
+            ))}
+          </div>
+          <div className="flex p-2">
+            <input
+              placeholder="新しいタグ"
+              value={newTag}
+              onChange={(e) => setNewTag(e.target.value)}
+              className="flex-grow p-2 border rounded"
+            />
+            <button onClick={handleAddTag} className="ml-2 bg-blue-500 text-white p-2 rounded">
+              追加
+            </button>
+          </div>
+        </div>
       </div>
       <div className="bg-white p-2 rounded mb-4">
         <h3 className="text-lg font-bold mb-2">タグごとの合計 (降順)</h3>
-        <ScrollArea className="h-40">
+        <div className="h-40 overflow-y-auto">
           {sortedTagTotals.map(({ tag, total, difference, rank }, index) => (
-            <Card key={tag} className="mb-2">
-              <CardHeader className="py-2">
-                <CardTitle className="text-sm">{tag}</CardTitle>
-              </CardHeader>
-              <CardContent className="py-2 flex justify-between items-center">
+            <div key={tag} className="mb-2 p-2 border rounded">
+              <div className="py-2">
+                <h4 className="text-sm font-bold">{tag}</h4>
+              </div>
+              <div className="py-2 flex justify-between items-center">
                 <p className="font-bold">{formatNumber(total)}</p>
                 <div className="flex items-center">
                   {index !== 0 && (
@@ -226,40 +216,39 @@ const Calculator = () => {
                     </p>
                   )}
                   {rank && (
-                    <Badge className={`${getRankColor(rank)} font-bold`}>
+                    <span className={`${getRankColor(rank)} font-bold px-2 py-1 rounded`}>
                       {rank}
-                    </Badge>
+                    </span>
                   )}
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           ))}
-        </ScrollArea>
+        </div>
       </div>
       <div className="bg-white p-2 rounded">
         <div className="flex justify-between items-center mb-2">
           <h3 className="text-lg font-bold">計算履歴</h3>
-          <Button onClick={handleClearHistory} className="bg-red-500 hover:bg-red-600 text-white text-sm">
+          <button onClick={handleClearHistory} className="bg-red-500 hover:bg-red-600 text-white text-sm p-2 rounded">
             履歴をクリア
-          </Button>
+          </button>
         </div>
-        <Select value={selectedTag} onValueChange={handleTagChange}>
-          <SelectTrigger className="w-full mb-2">
-            <SelectValue placeholder="タグでフィルタ" />
-          </SelectTrigger>
-          <SelectContent>
-            {tags.map((tag) => (
-              <SelectItem key={tag} value={tag}>{tag}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <ScrollArea className="h-40">
+        <select 
+          value={selectedTag} 
+          onChange={(e) => handleTagChange(e.target.value)}
+          className="w-full mb-2 p-2 border rounded"
+        >
+          {tags.map((tag) => (
+            <option key={tag} value={tag}>{tag}</option>
+          ))}
+        </select>
+        <div className="h-40 overflow-y-auto">
           {filteredHistory.map((item, index) => (
             <div key={index} className="mb-1 text-sm">
               <span className="font-bold">[{item.tag}]</span> {item.calculation}
             </div>
           ))}
-        </ScrollArea>
+        </div>
       </div>
     </div>
   );
