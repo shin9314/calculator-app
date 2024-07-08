@@ -65,7 +65,7 @@ const Calculator = () => {
     }
     const roundedResult = roundUpTo1000(result);
     const calculation = `${formatNumber(prevValue)} ${operation} ${formatNumber(current)} = ${formatNumber(roundedResult)}`;
-    const newHistoryItem = { calculation, tag: currentTag || '未分類', result: roundedResult };
+    const newHistoryItem = { calculation, tag: currentTag || '未選択', result: roundedResult };
     setHistory([newHistoryItem, ...history]);
     setDisplay(roundedResult.toString());
     setEquation('');
@@ -82,8 +82,8 @@ const Calculator = () => {
 
   const handleClearHistory = () => {
     setHistory([]);
-    setTags(['未分類']);
-    setSelectedTag('未分類');
+    setTags(['未選択']);
+    setSelectedTag('未選択');
     localStorage.removeItem('calculatorHistory');
     localStorage.removeItem('calculatorTags');
   };
@@ -138,7 +138,7 @@ const Calculator = () => {
     });
   }, [history]);
 
-  const filteredHistory = selectedTag === '未分類'
+  const filteredHistory = selectedTag === '未選択'
     ? history
     : history.filter(item => item.tag === selectedTag);
 
@@ -207,8 +207,8 @@ const Calculator = () => {
         </div>
       </div>
       <div className="bg-white p-2 rounded mb-4">
-        <h3 className="text-lg font-bold mb-2">タグごとの合計 (降順)</h3>
-        <div className="h-40 overflow-y-auto">
+        <h3 className="text-lg font-bold mb-2">現在の売上TOP</h3>
+        <div className="h-60 overflow-y-auto">
           {sortedTagTotals.map(({ tag, total, difference, rank }, index) => (
             <div key={tag} className="mb-2 p-2 border rounded">
               <div className="py-2">
@@ -237,7 +237,7 @@ const Calculator = () => {
         <div className="flex justify-between items-center mb-2">
           <h3 className="text-lg font-bold">計算履歴</h3>
           <button onClick={handleClearHistory} className="bg-red-500 hover:bg-red-600 text-white text-sm p-2 rounded">
-            履歴をクリア
+            履歴を削除
           </button>
         </div>
         <select 
