@@ -10,6 +10,7 @@ const Calculator = () => {
   const [tags, setTags] = useState(['未分類']);
   const [selectedTag, setSelectedTag] = useState('未分類');
   const [newTag, setNewTag] = useState('');
+  const [lastClearTime, setLastClearTime] = useState(0);
 
   useEffect(() => {
     const savedHistory = localStorage.getItem('calculatorHistory');
@@ -73,12 +74,27 @@ const Calculator = () => {
     setPrevValue(null);
   };
 
-  const handleClear = () => {
+const handleClear = () => {
+  const now = Date.now();
+  if (now - lastClearTime < 300) { // ダブルクリックとみなす時間間隔（ミリ秒）
     setDisplay('0');
     setEquation('');
     setOperation(null);
     setPrevValue(null);
-  };
+  } else {
+    if (display !== '0') {
+      setDisplay(display.slice(0, -1) || '0');
+    }
+    setEquation(prevEquation => {
+      const newEquation = prevEquation.trim().slice(0, -1).trim();
+      return newEquation || '';
+    });
+    if (operation && display === '0') {
+      setOperation(null);
+    }
+  }
+  setLastClearTime(now);
+};
 
   const handleClearHistory = () => {
     setHistory([]);
