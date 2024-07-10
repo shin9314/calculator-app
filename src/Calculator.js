@@ -86,7 +86,12 @@ useEffect(() => {
     }
     const roundedResult = roundUpTo1000(result);
     const calculation = `${formatNumber(prevValue)} ${operation} ${formatNumber(current)} = ${formatNumber(roundedResult)}`;
-    const newHistoryItem = { calculation, tag: currentTag || '未選択', result: roundedResult };
+    const newHistoryItem = { 
+      id: Date.now(),
+      calculation,
+      tag: currentTag || '未選択', 
+      result: roundedResult 
+    };
     setHistory([newHistoryItem, ...history]);
     setDisplay(roundedResult.toString());
     setEquation('');
