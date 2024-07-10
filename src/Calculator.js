@@ -11,6 +11,16 @@ const Calculator = () => {
   const [selectedTag, setSelectedTag] = useState('未分類');
   const [newTag, setNewTag] = useState('');
   const [lastClearTime, setLastClearTime] = useState(0);
+  const [historyMemos, setHistoryMemos] = useState({});
+
+  useEffect(() => {
+  const savedMemos = localStorage.getItem('calculatorHistoryMemos');
+  if (savedMemos) setHistoryMemos(JSON.parse(savedMemos));
+}, []);
+
+useEffect(() => {
+  localStorage.setItem('calculatorHistoryMemos', JSON.stringify(historyMemos));
+}, [historyMemos]);
 
   useEffect(() => {
     const savedHistory = localStorage.getItem('calculatorHistory');
@@ -26,6 +36,16 @@ const Calculator = () => {
   useEffect(() => {
     localStorage.setItem('calculatorTags', JSON.stringify(tags));
   }, [tags]);
+
+  const addMemoToHistory = (index) => {
+  const memo = prompt('メモを入力してください:');
+  if (memo) {
+    setHistoryMemos(prevMemos => ({
+      ...prevMemos,
+      [index]: memo
+    }));
+  }
+};
 
   const formatNumber = (num) => {
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -266,12 +286,20 @@ const handleClear = () => {
           ))}
         </select>
         <div className="h-40 overflow-y-auto">
-          {filteredHistory.map((item, index) => (
-            <div key={index} className="mb-1 text-sm">
-              <span className="font-bold">[{item.tag}]</span> {item.calculation}
-            </div>
-          ))}
-        </div>
+  {filteredHistory.map((item, index) => (
+    <div key={index} className="mb-1 text-sm">
+      <div 
+        className="cursor-pointer"
+        onClick={() => addMemoToHistory(index)}
+      >
+        <span className="font-bold">[{item.tag}]</span> {item.calculation}
+      </div>
+      {historyMemos[index] && (
+        <div className="text-xs text-gray-600 ml-4">メモ: {historyMemos[index]}</div>
+      )}
+    </div>
+  ))}
+</div>
       </div>
     </div>
   );
