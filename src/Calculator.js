@@ -37,12 +37,12 @@ useEffect(() => {
     localStorage.setItem('calculatorTags', JSON.stringify(tags));
   }, [tags]);
 
-  const addMemoToHistory = (index) => {
+  const addMemoToHistory = (id) => {  // index を id に変更
   const memo = prompt('メモを入力してください:');
   if (memo) {
     setHistoryMemos(prevMemos => ({
       ...prevMemos,
-      [index]: memo
+      [id]: memo  // index を id に変更
     }));
   }
 };
@@ -291,18 +291,20 @@ const handleClear = () => {
           ))}
         </select>
         <div className="h-40 overflow-y-auto">
-  {filteredHistory.map((item, index) => (
-    <div key={index} className="mb-1 text-sm">
+  {filteredHistory.map((item) => (  // index パラメータを削除
+    <div key={item.id} className="mb-1 text-sm">  // key を item.id に変更
       <div 
         className="cursor-pointer"
-        onClick={() => addMemoToHistory(index)}
+        onClick={() => addMemoToHistory(item.id)}  // index を item.id に変更
       >
         <span className="font-bold">[{item.tag}]</span> {item.calculation}
       </div>
-      {historyMemos[index] && (
-        <div className="text-xs text-gray-600 ml-4">メモ: {historyMemos[index]}</div>
+      {historyMemos[item.id] && (  // index を item.id に変更
+        <div className="text-xs text-gray-600 ml-4">メモ: {historyMemos[item.id]}</div>
       )}
     </div>
+  ))}
+</div>
   ))}
 </div>
       </div>
