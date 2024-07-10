@@ -7,7 +7,7 @@ const Calculator = () => {
   const [prevValue, setPrevValue] = useState(null);
   const [history, setHistory] = useState([]);
   const [currentTag, setCurrentTag] = useState('');
-  const [tags, setTags] = useState(['未分類']);
+  const [tags, setTags] = useState(['全ての履歴', '未分類']);
   const [selectedTag, setSelectedTag] = useState('未分類');
   const [newTag, setNewTag] = useState('');
   const [lastClearTime, setLastClearTime] = useState(0);
@@ -97,21 +97,21 @@ const handleClear = () => {
 };
 
   const handleClearHistory = () => {
-    setHistory([]);
-    setTags(['未選択']);
-    setSelectedTag('未選択');
-    localStorage.removeItem('calculatorHistory');
-    localStorage.removeItem('calculatorTags');
-  };
+  setHistory([]);
+  setTags(['全ての履歴', '未分類']);
+  setSelectedTag('全ての履歴');
+  localStorage.removeItem('calculatorHistory');
+  localStorage.removeItem('calculatorTags');
+};
 
   const handleAddTag = () => {
-    if (newTag && !tags.includes(newTag)) {
-      setTags([...tags, newTag]);
-      setSelectedTag(newTag);
-      setCurrentTag(newTag);
-      setNewTag('');
-    }
-  };
+  if (newTag && !tags.includes(newTag)) {
+    setTags(['全ての履歴', ...tags.filter(tag => tag !== '全ての履歴'), newTag]);
+    setSelectedTag(newTag);
+    setCurrentTag(newTag);
+    setNewTag('');
+  }
+};
 
   const handleTagChange = (tag) => {
     setSelectedTag(tag);
@@ -154,9 +154,9 @@ const handleClear = () => {
     });
   }, [history]);
 
-  const filteredHistory = selectedTag === '未選択'
-    ? history
-    : history.filter(item => item.tag === selectedTag);
+  const filteredHistory = selectedTag === '全ての履歴'
+  ? history
+  : history.filter(item => item.tag === selectedTag);
 
   const getRankColor = (rank) => {
     switch (rank) {
